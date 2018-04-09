@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var config = require('../../cdb.config');
 var LayerModelBase = require('./layer-model-base');
-var InfowindowTemplate = require('./infowindow-template');
 var TooltipTemplate = require('./tooltip-template');
 var Legends = require('./legends/legends');
 var AnalysisModel = require('../../analysis/analysis-model');
@@ -30,16 +29,15 @@ var CartoDBLayer = LayerModelBase.extend({
     }
 
     // PUBLIC PROPERTIES
-    this.infowindow = new InfowindowTemplate(attrs.infowindow);
+    this.infowindow = attrs.infowindow;
     this.tooltip = new TooltipTemplate(attrs.tooltip);
-    this.unset('infowindow');
     this.unset('tooltip');
 
     this.legends = new Legends(attrs.legends, { engine: this._engine });
     this.unset('legends');
 
     this.bind('change', this._onAttributeChanged, this);
-    this.infowindow.fields.bind('reset add remove', this._reload, this);
+    // TODO this.infowindow.fields.bind('reset add remove', this._reload, this);
     this.tooltip.fields.bind('reset add remove', this._reload, this);
 
     this.aggregation = options.aggregation;
@@ -60,7 +58,7 @@ var CartoDBLayer = LayerModelBase.extend({
   },
 
   _reload: function () {
-    this._engine.reload({
+    return this._engine.reload({
       sourceId: this.get('id')
     });
   },
@@ -79,7 +77,7 @@ var CartoDBLayer = LayerModelBase.extend({
   },
 
   _hasInfowindowFields: function () {
-    return this.infowindow.hasFields();
+    return !!this.infowindow.fields.length;
   },
 
   _hasTooltipFields: function () {
@@ -88,14 +86,10 @@ var CartoDBLayer = LayerModelBase.extend({
 
   getInteractiveColumnNames: function () {
     return _.chain(['cartodb_id'])
-      .union(this.infowindow.getFieldNames())
+      .union(_.pluck(this.infowindow.fields, 'name'))
       .union(this.tooltip.getFieldNames())
       .uniq()
       .value();
-  },
-
-  isInfowindowEnabled: function () {
-    return this.infowindow.hasTemplate();
   },
 
   isTooltipEnabled: function () {

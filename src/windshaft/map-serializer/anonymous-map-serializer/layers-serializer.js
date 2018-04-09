@@ -71,10 +71,10 @@ function optionsForMapnikLayer (layerModel) {
   var options = sharedOptionsForMapnikAndTorqueLayers(layerModel);
   options.interactivity = layerModel.getInteractiveColumnNames();
 
-  if (layerModel.infowindow && layerModel.infowindow.hasFields()) {
+  if (layerModel.infowindow && layerModel.infowindow.fields && layerModel.infowindow.fields.length) {
     options.attributes = {
       id: 'cartodb_id',
-      columns: layerModel.infowindow.getFieldNames()
+      columns: _.pluck(layerModel.infowindow.fields, 'name')
     };
   }
 
