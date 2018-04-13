@@ -21,7 +21,7 @@ function getValidationError (code) {
  *
  * To create a new client you need a CARTO account, where you will be able to get
  * your API key and username.
- * 
+ *
  * If you want to learn more about authorization and authentication, please read the authorization fundamentals section of our Developer Center.
  *
  * @param {object} settings
@@ -34,7 +34,7 @@ function getValidationError (code) {
  *   apiKey: 'YOUR_API_KEY_HERE',
  *   username: 'YOUR_USERNAME_HERE'
  * });
- * 
+ *
  * var client = new carto.Client({
  *   apiKey: 'YOUR_API_KEY_HERE',
  *   username: 'YOUR_USERNAME_HERE',
@@ -86,7 +86,8 @@ _.extend(Client.prototype, Backbone.Events);
  * @api
  */
 Client.prototype.addLayer = function (layer) {
-  return this.addLayers([layer]);
+  this._addLayer(layer);
+  return this._reload();
 };
 
 /**
@@ -111,7 +112,9 @@ Client.prototype.addLayer = function (layer) {
  * @api
  */
 Client.prototype.addLayers = function (layers) {
-  layers.forEach(this._addLayer, this);
+  for (var i = 0; i < layers.length; i++) {
+    this._addLayer(layers[i]);
+  }
   return this._reload();
 };
 
@@ -137,7 +140,8 @@ Client.prototype.addLayers = function (layers) {
  * @api
  */
 Client.prototype.removeLayer = function (layer) {
-  return this.removeLayers([layer]);
+  this._removeLayer(layer);
+  return this._reload();
 };
 
 /**
@@ -163,7 +167,9 @@ Client.prototype.removeLayer = function (layer) {
  * @api
  */
 Client.prototype.removeLayers = function (layers) {
-  layers.forEach(this._removeLayer, this);
+  for (var i = 0; i < layers.length; i++) {
+    this._removeLayer(layers[i]);
+  }
   return this._reload();
 };
 
@@ -240,7 +246,8 @@ Client.prototype.getLayers = function () {
  * @api
  */
 Client.prototype.addDataview = function (dataview) {
-  return this.addDataviews([dataview]);
+  this._addDataview(dataview);
+  return this._reload();
 };
 
 /**
@@ -265,7 +272,9 @@ Client.prototype.addDataview = function (dataview) {
  * @api
  */
 Client.prototype.addDataviews = function (dataviews) {
-  dataviews.forEach(this._addDataview, this);
+  for (var i = 0; i < dataviews.length; i++) {
+    this._addDataview(dataviews[i]);
+  }
   return this._reload();
 };
 
